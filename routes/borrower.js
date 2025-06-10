@@ -2,9 +2,11 @@ import {Router} from 'express'
 import { register } from '../controllers/borrower'
 import { registerUser } from '../config/fabric_config'
 
-const authRouter= Router()
+const borrowerRouter= Router()
 
-authRouter.get('/register', registerUser)
-authRouter.get('/:borrowerId', getProfile)
-authRouter.post('/:borrowerId/credit', submitCreditInfo)
-authRouter.post('/:borrowerId/credit/:lenderType', getCreditScore)
+borrowerRouter.get('/register', registerUser)
+borrowerRouter.get('/:borrowerId', getProfile)
+borrowerRouter.post('/:borrowerId/credit', submitCreditInfo)
+borrowerRouter.post('/:borrowerId/credit/:lenderType', getCreditScore)
+
+module.exports = borrowerRouter

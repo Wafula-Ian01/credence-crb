@@ -74,7 +74,7 @@ export const submitCreditInfo = async (req, res) => {
     }
 }
 
-//get credit score for specific lend type
+//get credit score for specific lender type
 export const getCreditScore = async (req, res) => {
     try {
         const { borrowerId, lenderType } = req.params
