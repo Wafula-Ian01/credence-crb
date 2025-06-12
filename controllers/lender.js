@@ -1,3 +1,6 @@
+import fabric_config from '../config/fabric_config'
+const { v4: uuidv4 } = require('uuid')
+
 //Register Lender
 export const register=async (req, res)=>{
     try{

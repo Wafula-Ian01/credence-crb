@@ -1,9 +1,10 @@
 import {Router} from 'express'
+import {register, requestCreditInfo, consensualCreditInfoRequest} from '../controllers/lenderController.js'
 
-const lenderRoute= Router()
+const lenderRouter= Router()
 
-lenderRoute.get('/register', register)
-lenderRoute.post('/request-credit', requestCreditInfo)
-lenderRoute.get('/credit/:borrowerId', consensualCreditInfoRequest)
+lenderRouter.post('/register', register)
+lenderRouter.post('/request-credit', requestCreditInfo)
+lenderRouter.get('/credit/:borrowerId', consensualCreditInfoRequest)
 
-module.exports= lenderRoute
+module.exports= lenderRouter
