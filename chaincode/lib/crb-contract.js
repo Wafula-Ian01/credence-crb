@@ -71,7 +71,7 @@ class CRBContract extends Contract{
     }
 
     async GetLender(ctx, lenderId){
-        const lenderData= wait ctx.stub.getState(lenderId)
+        const lenderData= await ctx.stub.getState(lenderId)
         if(!lenderData || lenderData.length===0){
             throw new Error(`Lender ${lenderId} does not exist`)
         }
