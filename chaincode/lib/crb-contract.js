@@ -77,5 +77,58 @@ class CRBContract extends Contract{
         }
         return lenderData.toString()
     }
+
+    //credit Record Management
+    async SubmitCreditRecord(ctx, creditRecordString){
+        const creditRecord= JSON.parse(creditRecordString)
+        const recordId= `CREDIT_${creditRecord.id}_${Date.now()}`
+
+        //check validity of borrower
+        const borrowerData= await ctx.stub.getState(creditRecord.borrowerId)
+        if(!borrowerData || borrowerData.length===0){
+            throw new Error(`Borrower ${creditRecord.borrowerId} does not exist.`)
+        }
+        
+        //Add record id and set initial verification fields
+        creditRecord.id= recordId
+        creditRecord.verificationStatus= 'PENDING'
+        creditRecord.verifiers=[]
+        creditRecord.verificationCount= 0
+        creditRecord.consensusReached= false
+
+        //store credit record
+        await ctx.stub.putState(recordId, Buffer.from(JSON.stringify(creditRecord)))
+
+        //create composite key for querying
+        const borrowCreditkey= await ctx.stub.createCompositeKey('borrower_credit', [creditRecord.borrowerId, recordId])
+        await ctx.stub.putState(borrowCreditkey, Buffer.from(JSON.stringify(creditRecord)))
+
+        const lenderCreditKey= await ctx.stub.createCompositeKey('lender_credit', [creditRecord.lenderId, recordId])
+        await ctx.stub.putState(lenderCreditKey, Buffer.from(JSON.stringify(creditRecord)))
+
+        //Emit event for verification data request
+        await ctx.stub.setEvent('CreditRecordSubmitted', Buffer.from(JSON.stringify({
+            recordId,
+            borrowerId: creditRecord.borrowerId,
+            lenderId: creditRecord.lenderId,
+            lenderType: creditRecord.lenderType,
+            timestamp: new Date().toISOString()
+        })))
+        console.log(`Credit record ${recordId} submitted for verification`)
+        return JSON.stringify(creditRecord)
+    }
+
+    async GetCreditRecord(ctx, recordid){
+        const creditRecord= await ctx.stub.getState(recordid)
+        if(!creditRecord || creditRecord.length===0){
+            throw new Error(`Credit record ${recordid} does not exist.`)
+        }
+        return creditRecord.toString()
+    }
+
+    async RequestCreditInfo(ctx){}
+
+    async CheckConsent(ctx){}
+
 }
 
